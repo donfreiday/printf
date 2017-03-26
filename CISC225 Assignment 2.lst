@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.00.24210.0	    03/25/17 09:18:46
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    03/25/17 20:33:00
 test.asm						     Page 1 - 1
 
 
@@ -12,26 +12,36 @@ test.asm						     Page 1 - 1
 
 				; ExitProcess PROTO return:DWORD
 				extern printf:NEAR
+				extern scanf:NEAR
 
  00000000			.data
- 00000000 48 65 6C 6C 6F	text BYTE "Hello world", 0
-	   20 77 6F 72 6C
-	   64 00
+ 00000000 25 64 00		input_format BYTE "%d",0
+ 00000003 59 6F 75 20 65	text BYTE "You entered: %d", 0
+	   6E 74 65 72 65
+	   64 3A 20 25 64
+	   00
+ 00000013 00000000		integer DWORD ?
 
  00000000			.code
  00000000			main PROC C                    ; Specify "C" calling convention
- 00000000  68 00000000 R	    push offset text
- 00000005  E8 00000000 E	    call printf
- 0000000A  83 C4 04		    add  esp, 4
+ 00000000  68 00000000 R		push offset input_format
+ 00000005  68 00000013 R		push offset integer
+ 0000000A  E8 00000000 E		call scanf
+ 0000000F  83 C4 08			add esp,8
+
+ 00000012  68 00000013 R		push offset integer
+ 00000017  68 00000003 R	    push offset text
+ 0000001C  E8 00000000 E		call printf
+ 00000021  83 C4 08		    add  esp,8
 				;   invoke ExitProcess,0       ; Since the C library called main (this function)
 				                               ; we can set eax to 0 and use ret to have
 				                               ; the C runtime close down and return our error
 				                               ; code instead of invoking ExitProcess
- 0000000D  B8 00000000		    mov eax, 0
- 00000012  C3			    ret
- 00000013			main ENDP
+ 00000024  B8 00000000		    mov eax, 0
+ 00000029  C3			    ret
+ 0000002A			main ENDP
 				end 
-Microsoft (R) Macro Assembler Version 14.00.24210.0	    03/25/17 09:18:46
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    03/25/17 20:33:00
 test.asm						     Symbols 2 - 1
 
 
@@ -42,15 +52,15 @@ Segments and Groups:
                 N a m e                 Size     Length   Align   Combine Class
 
 FLAT . . . . . . . . . . . . . .	GROUP
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000000C DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000013 DWord	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000017 DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000002A DWord	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000013 Public C
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000002A Public C
 
 
 Symbols:
@@ -66,8 +76,11 @@ Symbols:
 @fardata?  . . . . . . . . . . .	Text   	 FLAT
 @fardata . . . . . . . . . . . .	Text   	 FLAT
 @stack . . . . . . . . . . . . .	Text   	 FLAT
+input_format . . . . . . . . . .	Byte	 00000000 _DATA	
+integer  . . . . . . . . . . . .	DWord	 00000013 _DATA	
 printf . . . . . . . . . . . . .	L Near	 00000000 FLAT	External STDCALL
-text . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
+scanf  . . . . . . . . . . . . .	L Near	 00000000 FLAT	External STDCALL
+text . . . . . . . . . . . . . .	Byte	 00000003 _DATA	
 
 	   0 Warnings
 	   0 Errors
