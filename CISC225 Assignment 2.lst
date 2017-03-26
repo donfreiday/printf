@@ -1,0 +1,73 @@
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    03/25/17 09:18:46
+test.asm						     Page 1 - 1
+
+
+				.386
+				.model flat, stdcall
+
+				includelib libcmt.lib
+				includelib libvcruntime.lib
+				includelib libucrt.lib
+				includelib legacy_stdio_definitions.lib
+
+				; ExitProcess PROTO return:DWORD
+				extern printf:NEAR
+
+ 00000000			.data
+ 00000000 48 65 6C 6C 6F	text BYTE "Hello world", 0
+	   20 77 6F 72 6C
+	   64 00
+
+ 00000000			.code
+ 00000000			main PROC C                    ; Specify "C" calling convention
+ 00000000  68 00000000 R	    push offset text
+ 00000005  E8 00000000 E	    call printf
+ 0000000A  83 C4 04		    add  esp, 4
+				;   invoke ExitProcess,0       ; Since the C library called main (this function)
+				                               ; we can set eax to 0 and use ret to have
+				                               ; the C runtime close down and return our error
+				                               ; code instead of invoking ExitProcess
+ 0000000D  B8 00000000		    mov eax, 0
+ 00000012  C3			    ret
+ 00000013			main ENDP
+				end 
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    03/25/17 09:18:46
+test.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000000C DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000013 DWord	  Public  'CODE'	
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000013 Public C
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000003h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+printf . . . . . . . . . . . . .	L Near	 00000000 FLAT	External STDCALL
+text . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
+
+	   0 Warnings
+	   0 Errors

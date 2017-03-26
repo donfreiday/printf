@@ -1,0 +1,166 @@
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    01/31/17 14:49:51
+assignment2.asm						     Page 1 - 1
+
+
+				; assignment2.asm - CISC225 Assignment 2
+				; Don Freiday
+				; 1/31/2017
+
+				.386
+				.model flat,stdcall
+				.stack 4096
+				ExitProcess proto,dwExitCode:dword
+
+ 00000000			.data 
+ 00000000 0007				var1 sword 7 ; short var1 = 7;
+ 00000002 000F				var2 sword 15 ; short var2 = 15;
+ 00000004 0013				var3 sword 19 ; short var3 = 19;
+ 00000006 FFFFFFF1			var4 sdword -15; long var4 = -15;
+ 0000000A FFFFFFEB			var5 sdword -21 ; long var5 = -21;
+ 0000000E 00000012			var6 sdword 18; long var6 = 18;
+ 00000012  0000000A [			x sword 10 dup(0) ; short x[10] = { 0 }; // Initialize all element to 0.
+	    0000
+	   ]
+ 00000000			.data?
+ 00000000  00000005 [			y dword 5 dup(?) ; long y[5]; // Uninitialized
+	    00000000
+	   ]
+ 00000026			.data
+ 00000026 68 65 6C 6C 6F		z byte 'hello!',0 ; char z[] = "hello!"; // 7 elements, last element is 0.
+	   21 00
+ 0000002D 0000				var7 sword ? ; short var7, var8;
+ 0000002F 0000				var8 sword ? 
+ 00000031 00000000			var9 sdword ? ; long var9;
+
+ 00000000			.code
+ 00000000			main proc
+					;--------------------------------------------------------------------------------------
+					; C++: var7 = var1 - (var2 + var3);
+ 00000000  66| A1			mov ax,var1 ; ax = var1
+	   00000000 R
+ 00000006  66| 8B 1D			mov bx,var2 ; bx = var2
+	   00000002 R
+ 0000000D  66| 03 1D			add bx,var3 ; bx = var2 + var3
+	   00000004 R
+ 00000014  66| 2B C3			sub ax,bx ; ax = var1 - (var2 + var3)
+ 00000017  66| A3			mov var7,ax ; var7 = var1 - (var2 + var3) = -27
+	   0000002D R
+
+					;--------------------------------------------------------------------------------------
+					; C++: var8 = (var7 - ++var1) - (var2++ + var3);
+					;--------------------------------------------------------------------------------------
+					; ax = (var7 - ++var1)
+ 0000001D  66| FF 05			inc var1 ; ++ prefix increments variable before evaluating statement. var1 = 8
+	   00000000 R
+					; ax already = var7 = -27 from previous statement
+ 00000024  66| 2B 05			sub ax,var1 ; ax = (var7 - ++var1) = (-27 - 8) = -35
+	   00000000 R
+					
+					; bx = (var2++ + var3)
+ 0000002B  66| 8B 1D			mov bx,var2 ; bx = 15
+	   00000002 R
+ 00000032  66| 03 1D			add bx, var3 ; bx = var2 + var3 = 15 + 19 = 34
+	   00000004 R
+ 00000039  66| FF 05			inc var2 ; var2++, ++ suffix increments variable after evaluating statement. var2 = 16
+	   00000002 R
+					
+					; var8 = (var7 - ++var1) - (var2++ + var3);
+ 00000040  66| 2B C3			sub ax,bx ; ax = (var7 - ++var1) - (var2++ + var3) = (-35 - 34) = -69
+ 00000043  66| A3			mov var8,ax ; var8 = -69
+	   0000002F R
+
+					;--------------------------------------------------------------------------------------
+					; C++: var9 = --var4 - var5 + var6--;
+					;--------------------------------------------------------------------------------------
+ 00000049  FF 0D 00000006 R		dec var4 ; --var4, var4 = -16
+ 0000004F  A1 00000006 R		mov eax,var4
+ 00000054  2B 05 0000000A R		sub eax,var5 ; eax = (++var4 - var5) = (-16 - -21) = 5
+ 0000005A  2B 05 0000000E R		sub eax,var6 ; eax = (5 - 18) = -13
+ 00000060  A3 00000031 R		mov var9,eax
+ 00000065  FF 0D 0000000E R		dec var6; var6--. var6 = 17
+
+
+					;--------------------------------------------------------------------------------------
+					; C++: x[0] = var1 + var2 + var3;
+					;--------------------------------------------------------------------------------------
+ 0000006B  66| A1			mov ax,var1
+	   00000000 R
+ 00000071  66| 03 05			add ax,var2
+	   00000002 R
+ 00000078  66| 03 05			add ax,var3
+	   00000004 R
+ 0000007F  66| A3			mov x,ax
+	   00000012 R
+
+					;--------------------------------------------------------------------------------------
+					; C++: y[0] = var4 - var5;
+					;--------------------------------------------------------------------------------------
+ 00000085  A1 00000006 R		mov eax,var4
+ 0000008A  2B 05 0000000A R		sub eax,var5
+ 00000090  A3 00000000 R		mov y,eax
+
+					;--------------------------------------------------------------------------------------
+					; C++: z[0] = 'H';
+					;--------------------------------------------------------------------------------------
+ 00000095  C6 05 00000026 R		mov z,'H'
+	   48
+							
+
+					invoke ExitProcess,0 ; return 0;
+ 0000009C  6A 00	   *	    push   +000000000h
+ 0000009E  E8 00000000 E   *	    call   ExitProcess
+ 000000A3			main endp
+				end main
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    01/31/17 14:49:51
+assignment2.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
+_BSS . . . . . . . . . . . . . .	32 Bit	 00000014 DWord	  Public  'BSS'  
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000035 DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000A3 DWord	  Public  'CODE'	
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000A3 Public STDCALL
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000003h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+var1 . . . . . . . . . . . . . .	Word	 00000000 _DATA	
+var2 . . . . . . . . . . . . . .	Word	 00000002 _DATA	
+var3 . . . . . . . . . . . . . .	Word	 00000004 _DATA	
+var4 . . . . . . . . . . . . . .	DWord	 00000006 _DATA	
+var5 . . . . . . . . . . . . . .	DWord	 0000000A _DATA	
+var6 . . . . . . . . . . . . . .	DWord	 0000000E _DATA	
+var7 . . . . . . . . . . . . . .	Word	 0000002D _DATA	
+var8 . . . . . . . . . . . . . .	Word	 0000002F _DATA	
+var9 . . . . . . . . . . . . . .	DWord	 00000031 _DATA	
+x  . . . . . . . . . . . . . . .	Word	 00000012 _DATA	
+y  . . . . . . . . . . . . . . .	DWord	 00000000 _BSS	
+z  . . . . . . . . . . . . . . .	Byte	 00000026 _DATA	
+
+	   0 Warnings
+	   0 Errors
