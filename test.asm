@@ -11,18 +11,23 @@ extern printf:NEAR
 extern scanf:NEAR
 
 .data
+prompt BYTE "Enter an integer: ",0;
 input_format BYTE "%d",0
 text BYTE "You entered: %d", 0
 integer DWORD ?
 
 .code
 main PROC C                    ; Specify "C" calling convention
-	push offset input_format
+	push offset prompt
+	call printf
+	add esp,4
+	
 	push offset integer
+	push offset input_format
 	call scanf
 	add esp,8
 
-	push offset integer
+	push integer
     push offset text
 	call printf
     add  esp,8

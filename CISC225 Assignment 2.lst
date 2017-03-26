@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.00.24210.0	    03/25/17 20:33:00
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    03/25/17 23:24:05
 test.asm						     Page 1 - 1
 
 
@@ -15,33 +15,41 @@ test.asm						     Page 1 - 1
 				extern scanf:NEAR
 
  00000000			.data
- 00000000 25 64 00		input_format BYTE "%d",0
- 00000003 59 6F 75 20 65	text BYTE "You entered: %d", 0
+ 00000000 45 6E 74 65 72	prompt BYTE "Enter an integer: ",0;
+	   20 61 6E 20 69
+	   6E 74 65 67 65
+	   72 3A 20 00
+ 00000013 25 64 00		input_format BYTE "%d",0
+ 00000016 59 6F 75 20 65	text BYTE "You entered: %d", 0
 	   6E 74 65 72 65
 	   64 3A 20 25 64
 	   00
- 00000013 00000000		integer DWORD ?
+ 00000026 00000000		integer DWORD ?
 
  00000000			.code
  00000000			main PROC C                    ; Specify "C" calling convention
- 00000000  68 00000000 R		push offset input_format
- 00000005  68 00000013 R		push offset integer
- 0000000A  E8 00000000 E		call scanf
- 0000000F  83 C4 08			add esp,8
+ 00000000  68 00000000 R		push offset prompt
+ 00000005  E8 00000000 E		call printf
+ 0000000A  83 C4 04			add esp,4
+					
+ 0000000D  68 00000026 R		push offset integer
+ 00000012  68 00000013 R		push offset input_format
+ 00000017  E8 00000000 E		call scanf
+ 0000001C  83 C4 08			add esp,8
 
- 00000012  68 00000013 R		push offset integer
- 00000017  68 00000003 R	    push offset text
- 0000001C  E8 00000000 E		call printf
- 00000021  83 C4 08		    add  esp,8
+ 0000001F  FF 35 00000026 R		push integer
+ 00000025  68 00000016 R	    push offset text
+ 0000002A  E8 00000000 E		call printf
+ 0000002F  83 C4 08		    add  esp,8
 				;   invoke ExitProcess,0       ; Since the C library called main (this function)
 				                               ; we can set eax to 0 and use ret to have
 				                               ; the C runtime close down and return our error
 				                               ; code instead of invoking ExitProcess
- 00000024  B8 00000000		    mov eax, 0
- 00000029  C3			    ret
- 0000002A			main ENDP
+ 00000032  B8 00000000		    mov eax, 0
+ 00000037  C3			    ret
+ 00000038			main ENDP
 				end 
-Microsoft (R) Macro Assembler Version 14.00.24210.0	    03/25/17 20:33:00
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    03/25/17 23:24:05
 test.asm						     Symbols 2 - 1
 
 
@@ -52,15 +60,15 @@ Segments and Groups:
                 N a m e                 Size     Length   Align   Combine Class
 
 FLAT . . . . . . . . . . . . . .	GROUP
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000017 DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000002A DWord	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000002A DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000038 DWord	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000002A Public C
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000038 Public C
 
 
 Symbols:
@@ -76,11 +84,12 @@ Symbols:
 @fardata?  . . . . . . . . . . .	Text   	 FLAT
 @fardata . . . . . . . . . . . .	Text   	 FLAT
 @stack . . . . . . . . . . . . .	Text   	 FLAT
-input_format . . . . . . . . . .	Byte	 00000000 _DATA	
-integer  . . . . . . . . . . . .	DWord	 00000013 _DATA	
+input_format . . . . . . . . . .	Byte	 00000013 _DATA	
+integer  . . . . . . . . . . . .	DWord	 00000026 _DATA	
 printf . . . . . . . . . . . . .	L Near	 00000000 FLAT	External STDCALL
+prompt . . . . . . . . . . . . .	Byte	 00000000 _DATA	
 scanf  . . . . . . . . . . . . .	L Near	 00000000 FLAT	External STDCALL
-text . . . . . . . . . . . . . .	Byte	 00000003 _DATA	
+text . . . . . . . . . . . . . .	Byte	 00000016 _DATA	
 
 	   0 Warnings
 	   0 Errors
