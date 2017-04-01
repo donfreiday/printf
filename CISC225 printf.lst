@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.00.24210.0	    03/28/17 18:35:13
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    03/28/17 21:05:36
 test.asm						     Page 1 - 1
 
 
@@ -49,7 +49,7 @@ test.asm						     Page 1 - 1
  00000037  C3			    ret
  00000038			main ENDP
 				end 
-Microsoft (R) Macro Assembler Version 14.00.24210.0	    03/28/17 18:35:13
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    03/28/17 21:05:36
 test.asm						     Symbols 2 - 1
 
 
